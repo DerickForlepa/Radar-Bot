@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Radar",
+    "slug": "radar-pessoal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.derick.radarpessoal",
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "audio"],
+        "NSLocationWhenInUseUsageDescription": "O app usa sua localização para avisar dos radares à frente.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "O app precisa da localização em segundo plano para avisar dos radares com a tela apagada ou com outro app aberto."
+      }
+    },
+    "android": {
+      "package": "com.derick.radarpessoal",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f1115",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true,
+          "locationAlwaysAndWhenInUsePermission": "O app precisa da localização em segundo plano para avisar dos radares com a tela apagada ou com outro app aberto."
+        }
+      ],
+      "expo-audio"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

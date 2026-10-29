@@ -1,0 +1,55 @@
+name: Build iOS (.ipa sem assinatura)
+
+# Rode manualmente: aba Actions > "Build iOS" > Run workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar projeto iOS nativo
+        run: npx expo prebuild --platform ios
+
+      - name: Compilar sem assinatura
+        working-directory: ios
+        run: |
+          WS=$(ls -d *.xcworkspace | head -1)
+          SCHEME="${WS%.xcworkspace}"
+          echo "Workspace: $WS | Scheme: $SCHEME"
+          xcodebuild \
+            -workspace "$WS" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            | tail -n 40
+
+      - name: Empacotar .ipa
+        run: |
+          APP=$(ls -d ios/build/Build/Products/Release-iphoneos/*.app | head -1)
+          echo "App: $APP"
+          mkdir Payload
+          cp -R "$APP" Payload/
+          zip -qr Radar.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Radar-ipa
+          path: Radar.ipa
+          retention-days: 14
